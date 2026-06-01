@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const SECRET_CODE = "jinwoo";
+const SECRET_CODE = "arise";
 
 function LoginScreen({ onSuccess }) {
   const [input, setInput] = useState("");
@@ -642,4 +642,3 @@ export default function App() {
     </div>
   );
 }
-
