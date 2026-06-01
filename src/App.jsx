@@ -1,5 +1,87 @@
 import { useState, useEffect } from "react";
 
+const SECRET_CODE = "Lève Toi";
+
+function LoginScreen({ onSuccess }) {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
+  const [shake, setShake] = useState(false);
+
+  function handleSubmit() {
+    if (input.toLowerCase() === SECRET_CODE) {
+      localStorage.setItem("sl_auth", "true");
+      onSuccess();
+    } else {
+      setError(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
+  }
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: "#0a0a12",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontFamily: "'Courier New', monospace", color: "#e8e8ff",
+      flexDirection: "column", gap: "0",
+    }}>
+      <style>{`
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+        @keyframes glow-red { 0%,100%{box-shadow:0 0 10px #ff333344} 50%{box-shadow:0 0 30px #ff333388} }
+        @keyframes fadein { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .login-input { width:100%; padding:14px 16px; background:#0d0d1a; border:1px solid #333; color:#e8e8ff; font-family:'Courier New',monospace; font-size:16px; letter-spacing:4px; text-align:center; outline:none; transition:all .2s; }
+        .login-input:focus { border-color:#ff3333; box-shadow: 0 0 20px #ff333333; }
+        .login-btn { width:100%; padding:14px; background:#ff333322; border:1px solid #ff3333; color:#ff3333; font-family:'Courier New',monospace; font-size:14px; letter-spacing:3px; cursor:pointer; transition:all .3s; }
+        .login-btn:hover { background:#ff333344; box-shadow:0 0 20px #ff333344; }
+      `}</style>
+
+      <div style={{
+        width: "100%", maxWidth: "360px", padding: "0 24px",
+        animation: "fadein .6s ease-out",
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          <div style={{ fontSize: "11px", letterSpacing: "4px", color: "#555", marginBottom: "8px" }}>SYSTÈME D'ÉVEIL</div>
+          <div style={{ fontSize: "28px", letterSpacing: "2px", fontWeight: "bold", color: "#ff3333", marginBottom: "4px" }}>SOLO LEVELING</div>
+          <div style={{ fontSize: "11px", letterSpacing: "3px", color: "#555" }}>ACCÈS RESTREINT</div>
+        </div>
+
+        {/* Input */}
+        <div style={{
+          animation: shake ? "shake .4s ease-out" : "none",
+          marginBottom: "12px",
+        }}>
+          <div style={{ fontSize: "11px", color: "#555", letterSpacing: "3px", marginBottom: "8px" }}>
+            ▸ CODE D'ACCÈS
+          </div>
+          <input
+            className="login-input"
+            type="password"
+            placeholder="••••••••"
+            value={input}
+            onChange={e => { setInput(e.target.value); setError(false); }}
+            onKeyDown={e => e.key === "Enter" && handleSubmit()}
+            autoFocus
+          />
+          {error && (
+            <div style={{ color: "#ff3333", fontSize: "11px", letterSpacing: "2px", marginTop: "8px", textAlign: "center" }}>
+              ✕ CODE INVALIDE — ACCÈS REFUSÉ
+            </div>
+          )}
+        </div>
+
+        <button className="login-btn" onClick={handleSubmit}>
+          ▸ ENTRER DANS LE SYSTÈME
+        </button>
+
+        <div style={{ textAlign: "center", marginTop: "48px", color: "#222", fontSize: "11px", letterSpacing: "2px" }}>
+          "SEUL LE PLUS FORT PEUT ENTRER."
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const RANKS = ["E", "D", "C", "B", "A", "S"];
 const RANK_COLORS = {
   E: "#8888aa",
@@ -123,6 +205,10 @@ const DAILY_HABITS = [
 ];
 
 export default function App() {
+  const [authed, setAuthed] = useState(() => localStorage.getItem("sl_auth") === "true");
+
+  if (!authed) return <LoginScreen onSuccess={() => setAuthed(true)} />;
+
   const [week, setWeek] = useState(() => parseInt(localStorage.getItem("sl_week") || "0"));
   const [completedDays, setCompletedDays] = useState(() => {
     try { return JSON.parse(localStorage.getItem("sl_completed") || "{}"); } catch { return {}; }
@@ -556,3 +642,4 @@ export default function App() {
     </div>
   );
 }
+
