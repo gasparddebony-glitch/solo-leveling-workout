@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const SECRET_CODE = "Lève Toi";
+const SECRET_CODE = "jinwoo";
 
 function LoginScreen({ onSuccess }) {
   const [input, setInput] = useState("");
