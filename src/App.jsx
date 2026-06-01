@@ -8,7 +8,7 @@ function LoginScreen({ onSuccess }) {
   const [shake, setShake] = useState(false);
 
   function handleSubmit() {
-    if (input.toLowerCase() === SECRET_CODE) {
+    const cleaned = input.toLowerCase().trim(); if (cleaned === SECRET_CODE) {
       localStorage.setItem("sl_auth", "true");
       onSuccess();
     } else {
